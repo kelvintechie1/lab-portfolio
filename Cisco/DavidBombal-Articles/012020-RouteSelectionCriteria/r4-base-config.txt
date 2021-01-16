@@ -1,0 +1,63 @@
+!
+hostname R4
+!
+no aaa new-model
+!
+interface Loopback0
+ ip address 4.4.4.4 255.255.255.255
+!
+interface GigabitEthernet1
+ no ip address
+ negotiation auto
+!
+interface GigabitEthernet1.14
+ encapsulation dot1Q 14
+ ip address 10.1.4.4 255.255.255.0
+!
+interface GigabitEthernet1.24
+ encapsulation dot1Q 24
+ ip address 10.2.4.4 255.255.255.0
+!
+interface GigabitEthernet1.34
+ encapsulation dot1Q 34
+ ip address 10.3.4.4 255.255.255.0
+ ip router isis 
+ isis circuit-type level-2-only
+!
+interface GigabitEthernet1.214
+ encapsulation dot1Q 214
+ ip address 10.21.4.4 255.255.255.0
+ ip ospf cost 1000
+!
+router eigrp 100
+ network 4.4.4.4 0.0.0.0
+ network 10.2.4.4 0.0.0.0
+ eigrp router-id 4.4.4.4
+!
+router ospf 1
+ router-id 4.4.4.4
+ network 4.4.4.4 0.0.0.0 area 0
+ network 10.1.4.4 0.0.0.0 area 0
+ network 10.21.4.4 0.0.0.0 area 0
+!
+router isis
+ net 49.0001.4444.4444.4444.00
+ metric-style wide
+ log-adjacency-changes
+ passive-interface Loopback0
+!
+ip forward-protocol nd
+ip http server
+ip http authentication local
+ip http secure-server
+!
+control-plane
+!
+line con 0
+ stopbits 1
+line aux 0
+line vty 0 4
+ login
+ transport input ssh
+!
+end

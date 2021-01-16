@@ -1,0 +1,44 @@
+!
+hostname R2
+!
+no aaa new-model
+!
+no ip domain lookup
+!
+interface Loopback0
+ ip address 2.2.2.2 255.255.255.255
+!
+interface Loopback100
+ ip address 123.123.123.123 255.255.255.255
+!
+interface GigabitEthernet1
+ no ip address
+ negotiation auto
+!
+interface GigabitEthernet1.24
+ encapsulation dot1Q 24
+ ip address 10.2.4.2 255.255.255.0
+!
+router eigrp 100
+ network 10.2.4.2 0.0.0.0
+ network 123.123.123.123 0.0.0.0
+ eigrp router-id 2.2.2.2
+!
+ip forward-protocol nd
+ip http server
+ip http authentication local
+ip http secure-server
+!
+control-plane
+!
+line con 0
+ exec-timeout 0 0
+ privilege level 15
+ logging synchronous
+ stopbits 1
+line aux 0
+line vty 0 4
+ login
+ transport input ssh
+!
+end
